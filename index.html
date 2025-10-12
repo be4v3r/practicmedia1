@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Втрати у Другій світовій війні</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="iconww2.png">
+</head>git
+<body>
+
+<button class="theme-toggle">🌙</button>
+
+<div class="main-container">
+  <!-- Ліва колонка -->
+  <div class="country-column left">
+    <button class="country-btn" data-country="usa">США</button>
+    <button class="country-btn" data-country="japan">Японія</button>
+  </div>
+
+  <!-- Центральна колонка -->
+  <div class="country-column center">
+    <button class="country-btn" data-country="ussr">Радянський Союз</button>
+    <button class="country-btn" data-country="germany">Німеччина</button>
+    <button class="country-btn" data-country="poland">Польща</button>
+    <button class="country-btn" data-country="france">Франція</button>
+  </div>
+
+  <!-- Права колонка -->
+  <div class="country-column right">
+    <button class="country-btn" data-country="uk">Великобританія</button>
+    <button class="country-btn" data-country="italy">Італія</button>
+  </div>
+</div>
+
+<div class="info-panel" id="infoPanel">
+  <h2 id="countryName"></h2>
+  <p id="countryDesc"></p>
+  <p><strong>Військові жертви:</strong> <span id="militaryLosses"></span></p>
+  <p><strong>Цивільні жертви:</strong> <span id="civilLosses"></span></p>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

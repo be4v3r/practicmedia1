@@ -1,0 +1,136 @@
+:root {
+  --bg: #f4f4f4;
+  --text: #111;
+  --accent: #a00;
+  --panel-bg: #fff;
+}
+[data-theme="dark"] {
+  --bg: #121212;
+  --text: #eee;
+  --accent: #e33;
+  --panel-bg: #1e1e1e;
+}
+
+* { box-sizing: border-box; transition: all 0.3s; }
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4rem;
+  transform: translateX(0); /* було -60px */
+}
+
+.country-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  z-index: 2;
+}
+
+.country-btn {
+  width: 140px;
+  height: 90px;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid var(--text);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
+}
+.country-btn:hover {
+  transform: translateY(-6px) scale(1.08);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  border-color: var(--accent);
+}
+
+/* Прапори (заміни шляхи) */
+.country-btn[data-country="ussr"] { background-image: url('flags/ussr.png'); }
+.country-btn[data-country="germany"] { background-image: url('flags/germany.png'); }
+.country-btn[data-country="poland"] { background-image: url('flags/poland.svg'); }
+.country-btn[data-country="france"] { background-image: url('flags/france.png'); }
+.country-btn[data-country="uk"] { background-image: url('flags/uk.png'); }
+.country-btn[data-country="usa"] { background-image: url('flags/usa.png'); }
+.country-btn[data-country="japan"] { background-image: url('flags/japan.png'); }
+.country-btn[data-country="italy"] { background-image: url('flags/italy.png'); }
+
+.info-panel {
+  position: fixed;
+  top: 50%;
+  right: -700px; /* було -500px */
+  transform: translateY(-50%);
+  width: 520px; /* було 400px */
+  max-width: 95%;
+  background: var(--panel-bg);
+  box-shadow: -4px 0 25px rgba(0,0,0,0.35);
+  padding: 2.5rem;
+  overflow-y: auto;
+  transition: right 0.5s ease, opacity 0.5s;
+  opacity: 0;
+  z-index: 3;
+  border-left: 3px solid var(--accent);
+}
+.info-panel.active { right: 0; opacity: 1; }
+.info-panel h2 { margin-top: 0; color: var(--accent); font-size: 1.8rem; }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 1;
+}
+.overlay.active { opacity: 1; pointer-events: all; }
+
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: var(--panel-bg);
+  border: 1px solid var(--text);
+  color: var(--text);
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  z-index: 4;
+}
+
+@media (max-width: 900px) {
+  .main-container {
+    flex-direction: column;
+    transform: none;
+    gap: 1.5rem;
+  }
+  .country-column {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .country-btn {
+    width: 110px;
+    height: 70px;
+  }
+  .info-panel {
+    top: auto;
+    bottom: -500px;
+    right: 0;
+    transform: none;
+    width: 100%;
+  }
+  .info-panel.active { bottom: 0; }
+}
