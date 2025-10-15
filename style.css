@@ -26,6 +26,19 @@ body {
   position: relative;
 }
 
+.top {
+  display: flex;
+  position: fixed;
+  top: 1rem;
+}
+
+.header {
+  position: fixed;
+  left: 1rem;
+  font-family: 'Calibri';
+  font-size: 36px;
+}
+
 .main-container {
   display: flex;
   justify-content: center;
@@ -99,7 +112,6 @@ body {
 
 .theme-toggle {
   position: fixed;
-  top: 1rem;
   right: 1rem;
   background: var(--panel-bg);
   border: 1px solid var(--text);
