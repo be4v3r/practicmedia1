@@ -26,15 +26,6 @@ body {
   position: relative;
 }
 
-.header {
-  display: flex;
-  position: fixed;
-  left: 1rem;
-  top: 1rem;
-  font-family: 'Calibri';
-  font-size: 36px;
-}
-
 .main-container {
   display: flex;
   justify-content: center;
