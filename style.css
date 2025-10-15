@@ -27,6 +27,7 @@ body {
 }
 
 .header {
+  display: flex;
   position: fixed;
   left: 1rem;
   top: 1rem;
