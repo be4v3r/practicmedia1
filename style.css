@@ -134,3 +134,16 @@ body {
   }
   .info-panel.active { bottom: 0; }
 }
+
+.mute-toggle {
+  position: fixed;
+  top: 3.2rem;
+  right: 1rem;
+  background: var(--panel-bg);
+  border: 1px solid var(--text);
+  color: var(--text);
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  z-index: 4;
+}
