@@ -25,6 +25,7 @@ const muteBtn = document.querySelector(".mute-toggle");
 
 let currentAudio = null;
 let soundEnabled = true;
+let isButtonLocked = false;
 
 // Функція плавного затухання
 function fadeOutAudio(audio, duration = 2000) {
@@ -45,10 +46,19 @@ function fadeOutAudio(audio, duration = 2000) {
 // Відкрити інформацію
 countryButtons.forEach(btn => {
   btn.addEventListener("click", () => {
+    if (isButtonLocked) return; // Prevent spam clicking
+    isButtonLocked = true;
+    
     const id = btn.dataset.country;
     const data = countriesData[id];
     if (!data) return;
 
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+    }
+
+    // Update panel content
     document.getElementById("countryName").textContent = data.name;
     document.getElementById("countryDesc").textContent = data.desc;
     document.getElementById("militaryLosses").textContent = data.military;
@@ -57,15 +67,16 @@ countryButtons.forEach(btn => {
     panel.classList.add("active");
     overlay.classList.add("active");
 
-    // Гімн
     if (soundEnabled && data.anthem) {
-      if (currentAudio) fadeOutAudio(currentAudio, 800);
       currentAudio = new Audio(data.anthem);
-      currentAudio.volume = 0.7;
+      currentAudio.volume = 1;
       currentAudio.play();
-
-      setTimeout(() => fadeOutAudio(currentAudio, 1500), 10000);
     }
+
+    // Unlock button after animation completes
+    setTimeout(() => {
+      isButtonLocked = false;
+    }, 500);
   });
 });
 
