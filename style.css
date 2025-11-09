@@ -214,3 +214,24 @@ body {
     font-size: 1.5rem;
   }
 }
+
+.view-counter {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  background: var(--panel-bg);
+  color: var(--text);
+  border: 1px solid rgba(0,0,0,0.12);
+  padding: 0.45rem 0.7rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  z-index: 12;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+/* при завершенні (8/8) можна підсвітити */
+.view-counter.complete {
+  border-color: var(--accent);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+  transform: scale(1.03);
+}

@@ -23,6 +23,21 @@ const countryButtons = document.querySelectorAll(".country-btn");
 const themeToggle = document.querySelector(".theme-toggle");
 const muteBtn = document.querySelector(".mute-toggle");
 
+const viewCounter = document.getElementById("viewCounter");
+const viewedCountries = new Set();
+
+function updateViewCounter() {
+  const total = 8;
+  viewCounter.textContent = `${viewedCountries.size}/${total}`;
+  if (viewedCountries.size === total) {
+    viewCounter.classList.add("complete");
+    // запуск повного дощу конфетті при завершенні
+    startConfettiRain();
+  } else {
+    viewCounter.classList.remove("complete");
+  }
+}
+
 let currentAudio = null;
 let soundEnabled = true;
 let isButtonLocked = false;
@@ -52,6 +67,12 @@ countryButtons.forEach(btn => {
     const id = btn.dataset.country;
     const data = countriesData[id];
     if (!data) return;
+
+    // track unique view
+    if (!viewedCountries.has(id)) {
+      viewedCountries.add(id);
+      updateViewCounter();
+    }
 
     if (currentAudio) {
       currentAudio.pause();
@@ -105,3 +126,172 @@ muteBtn.addEventListener("click", () => {
   muteBtn.textContent = soundEnabled ? "🔊" : "🔇";
   if (!soundEnabled && currentAudio) fadeOutAudio(currentAudio, 800);
 });
+
+// Конфетті — canvas поверх усієї сторінки
+(function() {
+  const colors = ["#f94144","#f3722c","#f9c74f","#90be6d","#43aa8b","#577590","#277da1","#f72585"];
+  let canvas, ctx, w, h;
+  let particles = [];
+  let animating = false;
+
+  function ensureCanvas() {
+    if (canvas) return;
+    canvas = document.createElement("canvas");
+    canvas.style.position = "fixed";
+    canvas.style.left = "0";
+    canvas.style.top = "0";
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.pointerEvents = "none";
+    canvas.style.zIndex = 30;
+    document.body.appendChild(canvas);
+    ctx = canvas.getContext("2d");
+    resize();
+    window.addEventListener("resize", resize);
+  }
+
+  function resize() {
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    w = canvas.width = Math.floor(window.innerWidth * dpr);
+    h = canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+    ctx.scale(dpr, dpr);
+  }
+
+  function rand(min, max) { return Math.random() * (max - min) + min; }
+
+  function spawnBurst(x, y, count = 20) {
+    ensureCanvas();
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = rand(2, 9);
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed * 0.7 - rand(1,4),
+        size: rand(6, 14),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rot: rand(0, Math.PI * 2),
+        drot: rand(-0.2, 0.2),
+        life: rand(700, 1400),
+        born: performance.now()
+      });
+    }
+    startAnim();
+  }
+
+  function spawnRain(total = 200, duration = 1200) {
+    ensureCanvas();
+    const start = performance.now();
+    const interval = 10;
+    let spawned = 0;
+    const max = total;
+    const spawnLoop = setInterval(() => {
+      const now = performance.now();
+      if (now - start > duration || spawned >= max) {
+        clearInterval(spawnLoop);
+        return;
+      }
+      const x = rand(0, window.innerWidth);
+      const y = -10;
+      const speed = rand(1.5, 4.5);
+      particles.push({
+        x, y,
+        vx: rand(-1.5, 1.5),
+        vy: speed,
+        size: rand(6, 12),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rot: rand(0, Math.PI * 2),
+        drot: rand(-0.3, 0.3),
+        life: rand(2200, 3600),
+        born: performance.now()
+      });
+      spawned++;
+    }, interval);
+    startAnim();
+  }
+
+  function startConfettiRain() {
+    // невеликий попередній вибух + дощ
+    const rect = viewCounter.getBoundingClientRect();
+    spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 36);
+    setTimeout(() => spawnRain(300, 1400), 150);
+  }
+
+  function startAnim() {
+    if (animating) return;
+    animating = true;
+    requestAnimationFrame(tick);
+  }
+
+  function tick(now) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const toKeep = [];
+    for (let p of particles) {
+      const age = now - p.born;
+      if (age > p.life) continue;
+      // physics
+      p.vy += 0.06; // gravity
+      p.vx *= 0.999;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.drot;
+      // fade near end
+      const alpha = 1 - age / p.life;
+      // draw as rotated rectangle
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size * 0.6);
+      ctx.restore();
+      // keep if on screen roughly
+      if (p.y < window.innerHeight + 50 && p.x > -50 && p.x < window.innerWidth + 50) {
+        toKeep.push(p);
+      }
+    }
+    particles = toKeep;
+    if (particles.length > 0) {
+      requestAnimationFrame(tick);
+    } else {
+      animating = false;
+      // optional remove canvas after idle
+      setTimeout(() => {
+        if (!animating && canvas) {
+          // keep canvas for reuse to avoid re-creating if user continues
+        }
+      }, 800);
+    }
+  }
+
+  // Expose small burst to outer scope (used on each unique view)
+  window._confettiSpawnBurst = (x, y, count) => {
+    spawnBurst(x, y, count);
+  };
+  window._confettiStartRain = startConfettiRain;
+
+})();
+
+// Виклики: при додаванні у viewedCountries — вибух у позиції лічильника
+// Ми додаємо виклик у місці, де додається унікальний перегляд:
+(function patchUpdate() {
+  // знаходимо оригінальну updateViewCounter — вона вже змінена вище, тому просто викликатимемо ефект при додаванні перегляду
+  const originalAdd = viewedCountries.add;
+  viewedCountries.add = function(val) {
+    const res = originalAdd.call(this, val);
+    // маленький вибух поруч з лічильником
+    const rect = viewCounter.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    if (window._confettiSpawnBurst) window._confettiSpawnBurst(cx, cy, 16);
+    return res;
+  };
+})();
+
+// Зручні виклики з інших частин коду:
+function startConfettiRain() {
+  if (window._confettiStartRain) window._confettiStartRain();
+}
