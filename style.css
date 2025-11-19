@@ -11,7 +11,10 @@
   --panel-bg: #1e1e1e;
 }
 
-* { box-sizing: border-box; transition: all 0.3s; }
+* { 
+  box-sizing: border-box; 
+  transition: all 0.3s; 
+}
 
 body {
   margin: 0;
@@ -23,7 +26,6 @@ body {
   align-items: center;
   min-height: 100vh;
   overflow-x: hidden;
-  position: relative;
 }
 
 .main-container {
@@ -31,14 +33,14 @@ body {
   justify-content: center;
   align-items: center;
   gap: 4rem;
-  transform: translateX(0); /* було -60px */
+  z-index: 2;
+  padding: 1rem;
 }
 
 .country-column {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  z-index: 2;
 }
 
 .country-btn {
@@ -49,7 +51,7 @@ body {
   border: 2px solid var(--text);
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
 }
 .country-btn:hover {
   transform: translateY(-6px) scale(1.08);
@@ -57,7 +59,7 @@ body {
   border-color: var(--accent);
 }
 
-/* Прапори (заміни шляхи) */
+
 .country-btn[data-country="ussr"] { background-image: url('flags/ussr.png'); }
 .country-btn[data-country="germany"] { background-image: url('flags/germany.png'); }
 .country-btn[data-country="poland"] { background-image: url('flags/poland.svg'); }
@@ -67,24 +69,19 @@ body {
 .country-btn[data-country="japan"] { background-image: url('flags/japan.png'); }
 .country-btn[data-country="italy"] { background-image: url('flags/italy.png'); }
 
+
+
 .info-panel {
   position: fixed;
-  top: 50%;
-  right: -700px; /* було -500px */
-  transform: translateY(-50%);
-  width: 520px; /* було 400px */
-  max-width: 95%;
   background: var(--panel-bg);
-  box-shadow: -4px 0 25px rgba(0,0,0,0.35);
-  padding: 2.5rem;
   overflow-y: auto;
-  transition: right 0.5s ease, opacity 0.5s;
-  opacity: 0;
-  z-index: 3;
-  border-left: 3px solid var(--accent);
+  z-index: 100; 
 }
-.info-panel.active { right: 0; opacity: 1; }
-.info-panel h2 { margin-top: 0; color: var(--accent); font-size: 1.8rem; }
+.info-panel h2 { 
+  margin-top: 0; 
+  color: var(--accent); 
+  font-size: 1.8rem; 
+}
 
 .overlay {
   position: fixed;
@@ -92,146 +89,122 @@ body {
   background: rgba(0,0,0,0.35);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s;
-  z-index: 1;
+  transition: opacity 0.5s;
+  z-index: 99; 
 }
-.overlay.active { opacity: 1; pointer-events: all; }
-
-.theme-toggle {
-  position: fixed;
-  right: 1rem;
-  top: 1rem;
-  background: var(--panel-bg);
-  border: 1px solid var(--text);
-  color: var(--text);
-  border-radius: 0.5rem;
-  padding: 0.4rem 0.8rem;
-  cursor: pointer;
-  z-index: 4;
+.overlay.active { 
+  opacity: 1; 
+  pointer-events: all; 
 }
 
-.theme-toggle,
-.mute-toggle {
-  position: fixed;
-  top: 1rem;
-  padding: 0.8rem;
-  border: none;
-  border-radius: 50%;
-  background: var(--panel-bg);
-  color: var(--text);
-  cursor: pointer;
-  z-index: 10;
-  font-size: 1.4rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+
+@media (min-width: 901px) {
+  .info-panel {
+    top: 50%;
+    right: -100%;
+    transform: translateY(-50%);
+    width: 520px;
+    max-width: 95%;
+    box-shadow: -4px 0 25px rgba(0,0,0,0.35);
+    padding: 2.5rem;
+    border-left: 3px solid var(--accent);
+    opacity: 0;
+    transition: right 0.5s ease, opacity 0.4s;
+  }
+  .info-panel.active { 
+    right: 0;
+    opacity: 1; 
+  }
 }
 
-.theme-toggle:hover,
-.mute-toggle:hover {
-  transform: scale(1.1);
-}
-
-.theme-toggle {
-  right: 1rem;
-}
-
-.mute-toggle {
-  right: 4rem;
-}
 
 @media (max-width: 900px) {
   .main-container {
     flex-direction: column;
-    transform: none;
     gap: 1.5rem;
-    padding: 1rem;
-    margin-bottom: 4rem;
+    padding-bottom: 5rem; 
   }
-  
   .country-column {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
     gap: 1rem;
   }
-  
   .country-btn {
     width: 100px;
     height: 65px;
-    margin: 0;
   }
   
   .info-panel {
-    position: fixed;
     width: 100%;
-    left: 0;
-    right: 0;
-    top: auto;
+    max-height: 85vh;
     bottom: 0;
-    margin: 0;
+    left: 0;
+    
+    top: auto;
+    right: auto; 
+    
+    align-self: flex-end;
+    
+    transform: translateY(100%); 
+    
     padding: 1.5rem;
-    max-height: 80vh;
-    transform: translateY(100%);
-    border: none;
     border-top: 3px solid var(--accent);
-    border-radius: 1rem 1rem 0 0;
-    overflow-y: auto;
-    transition: transform 0.3s ease-in-out;
-    box-sizing: border-box;
+    border-radius: 1.2rem 1.2rem 0 0;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+    
+    transition: transform 0.4s ease-out;
   }
   
   .info-panel.active {
-    transform: translateY(0);
-  }
-  
-  .overlay.active {
-    opacity: 1;
-    pointer-events: all;
-  }
-  
-  .theme-toggle,
-  .mute-toggle {
-    padding: 0.5rem;
-    font-size: 1.2rem;
-  }
-  
-  .mute-toggle {
-    top: 1rem;
-    right: 3.5rem;
+    transform: translateY(0); 
   }
 }
 
 @media (max-width: 400px) {
-  .country-btn {
-    width: 85px;
-    height: 55px;
-  }
-  
-  .info-panel {
-    padding: 1.5rem;
-  }
-  
-  .info-panel h2 {
-    font-size: 1.5rem;
-  }
+  .country-btn { width: 85px; height: 55px; }
+  .info-panel { padding: 1.5rem 1rem; }
+  .info-panel h2 { font-size: 1.5rem; }
+}
+
+
+.view-counter, .theme-toggle, .mute-toggle {
+  position: fixed;
+  background: var(--panel-bg);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  z-index: 12;
 }
 
 .view-counter {
-  position: fixed;
   left: 1rem;
   top: 1rem;
-  background: var(--panel-bg);
-  color: var(--text);
   border: 1px solid rgba(0,0,0,0.12);
   padding: 0.45rem 0.7rem;
   border-radius: 0.5rem;
   font-weight: 600;
-  z-index: 12;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
-
-/* при завершенні (8/8) можна підсвітити */
 .view-counter.complete {
   border-color: var(--accent);
-  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
   transform: scale(1.03);
+}
+
+.theme-toggle, .mute-toggle {
+  top: 1rem;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.4rem;
+  transition: transform 0.2s;
+}
+.theme-toggle:hover, .mute-toggle:hover {
+  transform: scale(1.1);
+}
+
+.theme-toggle { right: 1rem; }
+.mute-toggle { right: 4.5rem; }
+
+@media (max-width: 900px) {
+  .mute-toggle { right: 4rem; }
 }
